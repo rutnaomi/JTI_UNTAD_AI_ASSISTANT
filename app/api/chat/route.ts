@@ -1,146 +1,124 @@
-import { google } from "@ai-sdk/google"
-import { streamText } from "ai"
-import type { NextRequest } from "next/server"
-import { createServerClient } from "@/lib/supabase"
+import { google } from "@ai-sdk/google";
+import { createOpenAI } from "@ai-sdk/openai";
+import { streamText } from "ai";
+import type { NextRequest } from "next/server";
+import { createServerClient } from "@/lib/supabase";
+import defaultSystemPrompt from "./systemPrompt";
 
-// Fungsi untuk mendapatkan system prompt dinamis
+// Fungsi untuk mendapatkan system prompt (sementara gunakan default modular)
 async function getSystemPrompt(): Promise<string> {
-  try {
-    const supabase = createServerClient()
-
-    const { data: activePrompt, error } = await supabase
-      .from("system_prompts")
-      .select("content")
-      .eq("is_active", true)
-      .single()
-
-    if (error || !activePrompt) {
-      // Fallback to default prompt
-      return `Anda adalah AI Assistant untuk Jurusan Teknologi Informasi Universitas Tadulako (JTI UNTAD). 
-
-IDENTITAS:
-- Nama: AI Assistant JTI UNTAD
-- Peran: Asisten virtual untuk membantu civitas akademika JTI UNTAD
-- Bahasa: Bahasa Indonesia (ramah dan profesional)
-
-PENGETAHUAN UTAMA:
-1. MAHASISWA BARU:
-   - Proses registrasi dan daftar ulang
-   - Orientasi mahasiswa baru (OSPEK)
-   - Pembuatan KTM dan email mahasiswa
-   - Pengenalan sistem akademik SIAKAD
-   - Struktur kurikulum dan mata kuliah wajib
-
-2. MAHASISWA AKTIF:
-   - Pengisian KRS (Kartu Rencana Studi)
-   - Jadwal kuliah dan ujian
-   - Prosedur cuti akademik
-   - Persyaratan skripsi dan tugas akhir
-   - Beasiswa dan bantuan keuangan
-   - Surat keterangan mahasiswa aktif
-
-3. DOSEN:
-   - Administrasi mengajar
-   - Penelitian dan pengabdian masyarakat
-   - Prosedur kenaikan jabatan
-   - Sistem penilaian dan input nilai
-
-4. INFORMASI UMUM:
-   - Kalender akademik
-   - Kontak penting (dekan, kaprodi, staff)
-   - Fasilitas kampus
-   - Organisasi mahasiswa
-
-CARA MERESPOND:
-- Berikan jawaban yang akurat dan lengkap
-- Gunakan bahasa yang mudah dipahami
-- Sertakan langkah-langkah konkret jika diperlukan
-- Jika tidak yakin, arahkan ke kontak yang tepat
-- Selalu ramah dan membantu
-
-BATASAN:
-- Hanya menjawab pertanyaan terkait administrasi JTI UNTAD
-- Tidak memberikan informasi pribadi mahasiswa/dosen
-- Tidak mengubah data atau melakukan transaksi
-
-Selalu awali dengan sapaan yang ramah dan akhiri dengan menawarkan bantuan lebih lanjut.`
-    }
-
-    return activePrompt.content
-  } catch (error) {
-    console.error("Error fetching system prompt:", error)
-    // Fallback to default prompt
-    return `Anda adalah AI Assistant untuk Jurusan Teknologi Informasi Universitas Tadulako (JTI UNTAD). 
-
-IDENTITAS:
-- Nama: AI Assistant JTI UNTAD
-- Peran: Asisten virtual untuk membantu civitas akademika JTI UNTAD
-- Bahasa: Bahasa Indonesia (ramah dan profesional)
-
-PENGETAHUAN UTAMA:
-1. MAHASISWA BARU:
-   - Proses registrasi dan daftar ulang
-   - Orientasi mahasiswa baru (OSPEK)
-   - Pembuatan KTM dan email mahasiswa
-   - Pengenalan sistem akademik SIAKAD
-   - Struktur kurikulum dan mata kuliah wajib
-
-2. MAHASISWA AKTIF:
-   - Pengisian KRS (Kartu Rencana Studi)
-   - Jadwal kuliah dan ujian
-   - Prosedur cuti akademik
-   - Persyaratan skripsi dan tugas akhir
-   - Beasiswa dan bantuan keuangan
-   - Surat keterangan mahasiswa aktif
-
-3. DOSEN:
-   - Administrasi mengajar
-   - Penelitian dan pengabdian masyarakat
-   - Prosedur kenaikan jabatan
-   - Sistem penilaian dan input nilai
-
-4. INFORMASI UMUM:
-   - Kalender akademik
-   - Kontak penting (dekan, kaprodi, staff)
-   - Fasilitas kampus
-   - Organisasi mahasiswa
-
-CARA MERESPOND:
-- Berikan jawaban yang akurat dan lengkap
-- Gunakan bahasa yang mudah dipahami
-- Sertakan langkah-langkah konkret jika diperlukan
-- Jika tidak yakin, arahkan ke kontak yang tepat
-- Selalu ramah dan membantu
-
-BATASAN:
-- Hanya menjawab pertanyaan terkait administrasi JTI UNTAD
-- Tidak memberikan informasi pribadi mahasiswa/dosen
-- Tidak mengubah data atau melakukan transaksi
-
-Selalu awali dengan sapaan yang ramah dan akhiri dengan menawarkan bantuan lebih lanjut.`
-  }
+  return defaultSystemPrompt;
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages } = await req.json()
+    const body = await req.json();
+    const messages = body?.messages;
+    const provider: string = body?.provider || "gemini";
+    const modelOverride: string | undefined = body?.model;
+    const temperature: number | undefined = body?.temperature;
+    const maxTokens: number | undefined = body?.maxTokens; // currently unused; retain for future compatibility
 
-    const systemPrompt = await getSystemPrompt()
+    if (!messages || !Array.isArray(messages)) {
+      return new Response(
+        JSON.stringify({
+          error: "Invalid payload: 'messages' must be an array",
+        }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
-    const result = await streamText({
-      model: google("gemini-2.0-flash-exp"),
-      system: systemPrompt,
-      messages,
-      temperature: 0.7,
-      maxTokens: 1000,
-    })
+    const systemPrompt = await getSystemPrompt();
 
-    return result.toDataStreamResponse()
+    // Provider switch
+    let result;
+    if (provider === "openrouter") {
+      const apiKey = process.env.OPENROUTER_API_KEY;
+      if (!apiKey) {
+        return new Response(
+          JSON.stringify({
+            error: "Missing OPENROUTER_API_KEY in environment",
+          }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      const openrouter = createOpenAI({
+        apiKey,
+        baseURL: "https://openrouter.ai/api/v1",
+      });
+
+      const modelName =
+        modelOverride || "meta-llama/llama-3.1-8b-instruct:free";
+
+      result = await streamText({
+        model: openrouter(modelName),
+        system: systemPrompt,
+        messages,
+        temperature: temperature ?? 0.7,
+      });
+    } else if (provider === "gemini") {
+      const geminiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+      if (!geminiKey) {
+        return new Response(
+          JSON.stringify({
+            error: "Missing GOOGLE_GENERATIVE_AI_API_KEY in environment",
+          }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      const modelName = modelOverride || "gemini-2.5-flash";
+
+      result = await streamText({
+        model: google(modelName),
+        system: systemPrompt,
+        messages,
+        temperature: temperature ?? 0.7,
+      });
+    } else {
+      return new Response(
+        JSON.stringify({
+          error: "Invalid provider. Use 'gemini' or 'openrouter'.",
+        }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Return JSON line stream compatible with client renderer (lines starting with `0:` followed by JSON)
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        (async () => {
+          try {
+            // Stream text deltas and wrap into JSON envelopes the client expects
+            for await (const delta of result.textStream) {
+              const payload = `0:${JSON.stringify({
+                type: "text-delta",
+                textDelta: String(delta),
+              })}\n`;
+              controller.enqueue(encoder.encode(payload));
+            }
+            controller.close();
+          } catch (e) {
+            controller.error(e);
+          }
+        })();
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        // Plain text NDJSON-like stream; client parses JSON per line
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-cache",
+      },
+    });
   } catch (error) {
-    console.error("Chat API Error:", error)
+    console.error("Chat API Error:", error);
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
-    })
+    });
   }
 }

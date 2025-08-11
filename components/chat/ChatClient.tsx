@@ -155,7 +155,7 @@ export default function ChatClient({
 
   return (
     <div className="h-full flex flex-col">
-      <Card className="h-[600px] flex flex-col">
+      <Card className="min-h-[600px] h-full flex flex-col bg-white">
         <CardHeader className="bg-blue-50">
           <CardTitle className="flex items-center justify-between">
             <span className="flex items-center gap-2">
@@ -201,8 +201,8 @@ export default function ChatClient({
           </CardTitle>
         </CardHeader>
 
-        <CardContent className="flex-1 flex flex-col p-0">
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <CardContent className="flex-1 flex flex-col p-0 bg-white">
+          <div className="flex-1 overflow-y-auto p-4 pb-6 space-y-4 min-h-0 bg-white border-b border-gray-200">
             {messages.length === 0 && (
               <div className="text-center py-8">
                 <Bot className="w-16 h-16 mx-auto text-blue-600 mb-4" />
@@ -238,7 +238,7 @@ export default function ChatClient({
                 }`}
               >
                 <div
-                  className={`max-w-[80%] rounded-lg p-3 ${
+                  className={`max-w-[80%] rounded-lg p-3 break-words ${
                     message.role === "user"
                       ? "bg-blue-600 text-white"
                       : "bg-gray-100 text-gray-900"
@@ -281,17 +281,17 @@ export default function ChatClient({
                 </div>
               </div>
             )}
-            <div ref={messagesEndRef} />
+            <div ref={messagesEndRef} className="mb-4" />
           </div>
 
-          <div className="border-t p-4">
-            <form onSubmit={handleSubmit} className="flex space-x-2">
+          <div className="p-4 bg-gray-50 border-t border-gray-200 mt-2">
+            <form onSubmit={handleSubmit} className="flex space-x-2 bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ketik pertanyaan Anda tentang administrasi JTI..."
                 disabled={isLoading}
-                className="flex-1"
+                className="flex-1 border-0 focus:ring-0 focus:ring-offset-0"
               />
               <Button type="submit" disabled={isLoading || !input.trim()}>
                 <Send className="w-4 h-4" />

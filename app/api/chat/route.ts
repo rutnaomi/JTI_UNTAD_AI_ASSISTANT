@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
             for await (const delta of result.textStream) {
               const payload = `0:${JSON.stringify({
                 type: "text-delta",
-                textDelta: String(delta),
+                textDelta: delta,
               })}\n`;
               controller.enqueue(encoder.encode(payload));
             }

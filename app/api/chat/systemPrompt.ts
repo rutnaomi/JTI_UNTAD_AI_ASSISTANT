@@ -36,10 +36,10 @@ CORE KNOWLEDGE:
     - Student organizations
 
 5. LECTURER INFORMATION:
-    - riska anjay
+    - riska 
 
 6. SPESSIFIC INSTRUCTION ABOUT HOW TO CREATE KRS :
-    -pukul pak deny
+    - berdoa
 
 HOW TO RESPOND:
 - Provide accurate and complete answers.

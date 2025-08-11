@@ -4,8 +4,8 @@ import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'JTI UNTAD - AI Assistant',
+  description: 'Portal Administrasi Jurusan Teknologi Informasi Universitas Tadulako dengan AI Assistant',
   generator: 'v0.dev',
 }
 

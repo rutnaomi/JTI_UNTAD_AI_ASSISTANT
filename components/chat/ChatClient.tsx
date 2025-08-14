@@ -40,7 +40,7 @@ export default function ChatClient({
     model ??
       (localProvider === "openrouter"
         ? "meta-llama/llama-3.1-8b-instruct:free"
-        : "gemini-2.0-flash-exp")
+        : "gemini-2.5-flash")
   );
 
   useEffect(() => {
@@ -88,7 +88,20 @@ export default function ChatClient({
           temperature: 0.7,
         }),
       });
-      if (!response.ok) throw new Error("Failed to get response");
+      if (!response.ok) {
+        let details = "";
+        try {
+          const data = await response.json();
+          details = (data && (data.error || data.message)) || "";
+        } catch {
+          try {
+            details = await response.text();
+          } catch {}
+        }
+        throw new Error(
+          details || `Request failed with status ${response.status}`
+        );
+      }
 
       const reader = response.body?.getReader();
       if (!reader) throw new Error("No reader available");
@@ -175,7 +188,7 @@ export default function ChatClient({
                     setLocalModel(
                       next === "openrouter"
                         ? "meta-llama/llama-3.1-8b-instruct:free"
-                        : "gemini-2.0-flash-exp"
+                        : "gemini-2.5-flash"
                     );
                   }
                 }}
@@ -238,24 +251,18 @@ export default function ChatClient({
                 }`}
               >
                 <div
-                  className={`max-w-[80%] rounded-lg p-3 break-words ${
+                  className={`inline-flex items-start gap-2 w-fit max-w-[80%] rounded-lg p-3 ${
                     message.role === "user"
                       ? "bg-blue-600 text-white"
                       : "bg-gray-100 text-gray-900"
                   }`}
                 >
-                  <div className="flex items-start space-x-2">
-                    {message.role === "assistant" && (
-                      <Bot className="w-4 h-4 mt-1 text-blue-600" />
-                    )}
-                    {message.role === "user" && (
-                      <User className="w-4 h-4 mt-1" />
-                    )}
-                    <div className="flex-1">
-                      <div className="whitespace-pre-wrap">
-                        {message.content}
-                      </div>
-                    </div>
+                  {message.role === "assistant" && (
+                    <Bot className="w-4 h-4 mt-1 text-blue-600" />
+                  )}
+                  {message.role === "user" && <User className="w-4 h-4 mt-1" />}
+                  <div className="whitespace-pre-wrap break-words">
+                    {message.content}
                   </div>
                 </div>
               </div>
@@ -285,7 +292,10 @@ export default function ChatClient({
           </div>
 
           <div className="p-4 bg-gray-50 border-t border-gray-200 mt-2">
-            <form onSubmit={handleSubmit} className="flex space-x-2 bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+            <form
+              onSubmit={handleSubmit}
+              className="flex space-x-2 bg-white p-3 rounded-lg border border-gray-200 shadow-sm"
+            >
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}

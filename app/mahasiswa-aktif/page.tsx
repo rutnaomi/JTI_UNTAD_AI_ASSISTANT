@@ -1,7 +1,22 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft, BookOpen, Calendar, FileText, GraduationCap, Users, AlertCircle } from "lucide-react"
-import Link from "next/link"
+"use client";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  ArrowLeft,
+  BookOpen,
+  Calendar,
+  FileText,
+  GraduationCap,
+  Users,
+  AlertCircle,
+} from "lucide-react";
+import Link from "next/link";
 
 export default function MahasiswaAktifPage() {
   const academicServices = [
@@ -49,12 +64,13 @@ export default function MahasiswaAktifPage() {
       deadline: "Maksimal minggu ke-4 semester berjalan",
       contact: "Kaprodi JTI: kaprodi.jti@untad.ac.id",
     },
-  ]
+  ];
 
   const administrativeServices = [
     {
       title: "Surat Keterangan Mahasiswa Aktif",
-      description: "Untuk keperluan beasiswa, magang, atau administrasi lainnya",
+      description:
+        "Untuk keperluan beasiswa, magang, atau administrasi lainnya",
       requirements: [
         "Fotokopi KTM yang masih berlaku",
         "Fotokopi KRS semester berjalan",
@@ -88,7 +104,7 @@ export default function MahasiswaAktifPage() {
       process: "1-2 minggu",
       location: "Dekan Fakultas MIPA",
     },
-  ]
+  ];
 
   const importantDates = [
     { event: "Pengisian KRS", date: "1-14 Januari 2024", type: "deadline" },
@@ -96,7 +112,7 @@ export default function MahasiswaAktifPage() {
     { event: "UTS", date: "18-29 Maret 2024", type: "exam" },
     { event: "UAS", date: "20-31 Mei 2024", type: "exam" },
     { event: "Pengumuman Nilai", date: "10 Juni 2024", type: "info" },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -111,8 +127,12 @@ export default function MahasiswaAktifPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Panduan Mahasiswa Aktif</h1>
-              <p className="text-gray-600">Informasi akademik dan administrasi untuk mahasiswa JTI UNTAD</p>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Panduan Mahasiswa Aktif
+              </h1>
+              <p className="text-gray-600">
+                Informasi akademik dan administrasi untuk mahasiswa JTI UNTAD
+              </p>
             </div>
           </div>
         </div>
@@ -126,15 +146,27 @@ export default function MahasiswaAktifPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2 bg-transparent">
+              <Button
+                variant="outline"
+                className="h-auto p-4 flex flex-col items-center space-y-2 bg-transparent"
+                onClick={() =>
+                  window.open("https://siakad.untad.ac.id", "_blank")
+                }
+              >
                 <BookOpen className="w-6 h-6 text-blue-600" />
                 <span className="text-sm">Login SIAKAD</span>
               </Button>
-              <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2 bg-transparent">
+              <Button
+                variant="outline"
+                className="h-auto p-4 flex flex-col items-center space-y-2 bg-transparent"
+              >
                 <FileText className="w-6 h-6 text-green-600" />
                 <span className="text-sm">Download KHS</span>
               </Button>
-              <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2 bg-transparent">
+              <Button
+                variant="outline"
+                className="h-auto p-4 flex flex-col items-center space-y-2 bg-transparent"
+              >
                 <Calendar className="w-6 h-6 text-purple-600" />
                 <span className="text-sm">Jadwal Kuliah</span>
               </Button>
@@ -153,7 +185,9 @@ export default function MahasiswaAktifPage() {
 
         {/* Academic Services */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Layanan Akademik</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Layanan Akademik
+          </h2>
           <div className="grid gap-6">
             {academicServices.map((service, index) => (
               <Card key={index}>
@@ -170,7 +204,10 @@ export default function MahasiswaAktifPage() {
                       <h4 className="font-semibold mb-3">Langkah-langkah:</h4>
                       <ol className="space-y-2">
                         {service.steps.map((step, stepIndex) => (
-                          <li key={stepIndex} className="flex items-start space-x-2">
+                          <li
+                            key={stepIndex}
+                            className="flex items-start space-x-2"
+                          >
                             <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
                               {stepIndex + 1}
                             </span>
@@ -183,16 +220,24 @@ export default function MahasiswaAktifPage() {
                       <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                         <div className="flex items-center space-x-2 mb-1">
                           <AlertCircle className="w-4 h-4 text-yellow-600" />
-                          <span className="font-medium text-yellow-800">Batas Waktu</span>
+                          <span className="font-medium text-yellow-800">
+                            Batas Waktu
+                          </span>
                         </div>
-                        <p className="text-yellow-700 text-sm">{service.deadline}</p>
+                        <p className="text-yellow-700 text-sm">
+                          {service.deadline}
+                        </p>
                       </div>
                       <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
                         <div className="flex items-center space-x-2 mb-1">
                           <Users className="w-4 h-4 text-blue-600" />
-                          <span className="font-medium text-blue-800">Kontak</span>
+                          <span className="font-medium text-blue-800">
+                            Kontak
+                          </span>
                         </div>
-                        <p className="text-blue-700 text-sm">{service.contact}</p>
+                        <p className="text-blue-700 text-sm">
+                          {service.contact}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -204,7 +249,9 @@ export default function MahasiswaAktifPage() {
 
         {/* Administrative Services */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Layanan Administrasi</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Layanan Administrasi
+          </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {administrativeServices.map((service, index) => (
               <Card key={index}>
@@ -217,7 +264,10 @@ export default function MahasiswaAktifPage() {
                     <h4 className="font-semibold mb-2">Persyaratan:</h4>
                     <ul className="space-y-1">
                       {service.requirements.map((req, reqIndex) => (
-                        <li key={reqIndex} className="flex items-start space-x-2">
+                        <li
+                          key={reqIndex}
+                          className="flex items-start space-x-2"
+                        >
                           <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
                           <span className="text-sm text-gray-700">{req}</span>
                         </li>
@@ -251,11 +301,18 @@ export default function MahasiswaAktifPage() {
           <CardContent>
             <div className="space-y-3">
               {importantDates.map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-3 rounded-lg border">
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 rounded-lg border"
+                >
                   <div className="flex items-center space-x-3">
                     <div
                       className={`w-3 h-3 rounded-full ${
-                        item.type === "deadline" ? "bg-red-500" : item.type === "exam" ? "bg-orange-500" : "bg-blue-500"
+                        item.type === "deadline"
+                          ? "bg-red-500"
+                          : item.type === "exam"
+                          ? "bg-orange-500"
+                          : "bg-blue-500"
                       }`}
                     ></div>
                     <span className="font-medium">{item.event}</span>
@@ -271,32 +328,50 @@ export default function MahasiswaAktifPage() {
         <Card>
           <CardHeader>
             <CardTitle>Kontak Penting</CardTitle>
-            <CardDescription>Hubungi kontak berikut untuk bantuan lebih lanjut</CardDescription>
+            <CardDescription>
+              Hubungi kontak berikut untuk bantuan lebih lanjut
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-semibold text-gray-900">Bagian Akademik</h4>
-                  <p className="text-sm text-gray-600">Email: akademik.jti@untad.ac.id</p>
+                  <h4 className="font-semibold text-gray-900">
+                    Bagian Akademik
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    Email: akademik.jti@untad.ac.id
+                  </p>
                   <p className="text-sm text-gray-600">Telp: (0451) 123456</p>
-                  <p className="text-sm text-gray-600">Jam: 08:00 - 15:00 WIB</p>
+                  <p className="text-sm text-gray-600">
+                    Jam: 08:00 - 15:00 WIB
+                  </p>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900">Ketua Program Studi</h4>
-                  <p className="text-sm text-gray-600">Email: kaprodi.jti@untad.ac.id</p>
+                  <h4 className="font-semibold text-gray-900">
+                    Ketua Program Studi
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    Email: kaprodi.jti@untad.ac.id
+                  </p>
                   <p className="text-sm text-gray-600">Telp: (0451) 123457</p>
                 </div>
               </div>
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-semibold text-gray-900">Bagian Kemahasiswaan</h4>
-                  <p className="text-sm text-gray-600">Email: kemahasiswaan@untad.ac.id</p>
+                  <h4 className="font-semibold text-gray-900">
+                    Bagian Kemahasiswaan
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    Email: kemahasiswaan@untad.ac.id
+                  </p>
                   <p className="text-sm text-gray-600">Telp: (0451) 123458</p>
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900">AI Assistant</h4>
-                  <p className="text-sm text-gray-600 mb-2">Bantuan 24/7 untuk pertanyaan administrasi</p>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Bantuan 24/7 untuk pertanyaan administrasi
+                  </p>
                   <Link href="/chat">
                     <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
                       Chat Sekarang
@@ -309,5 +384,5 @@ export default function MahasiswaAktifPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

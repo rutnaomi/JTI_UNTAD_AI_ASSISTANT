@@ -1,3 +1,4 @@
+"use client"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, BookOpen, Users, FileText, Award, Calendar, Settings, MessageSquare } from "lucide-react"
@@ -139,9 +140,15 @@ export default function DosenPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2 bg-transparent">
+              <Button
+                variant="outline"
+                className="h-auto p-4 flex flex-col items-center space-y-2 bg-transparent"
+                onClick={() =>
+                  window.open("https://siakad.untad.ac.id", "_blank")
+                }
+              >
                 <BookOpen className="w-6 h-6 text-blue-600" />
-                <span className="text-sm">SIAKAD Dosen</span>
+                <span className="text-sm">Login SIAKAD</span>
               </Button>
               <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2 bg-transparent">
                 <Users className="w-6 h-6 text-green-600" />
